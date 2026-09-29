@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  postdeck card-deck template.
+  Duplicate .page per card. Keep 1242x1656 geometry — the render stage
+  depends on it. Vendor KaTeX into ./katex/ before printing; see
+  references/layout.md and references/render.md.
+-->
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="katex/katex.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #2a2438;         /* body text */
+    --sub: #6b6480;         /* secondary text */
+    --accent: #5a49c8;      /* pull the source blog's theme hue */
+    --accent-soft: #efecfb;
+    --accent-mid: #c9c1f0;
+    --paper: #faf8f4;
+    --warn: #b3541e;        /* caveats / "shared" highlights */
+    --warn-soft: #fbe9df;
+  }
+  @page { size: 1242px 1656px; margin: 0; }
+  html, body { background: #ddd; }
+  .page {
+    width: 1242px; height: 1656px;
+    page-break-after: always;
+    overflow: hidden;
+    position: relative;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    padding: 72px 76px 96px;
+    display: flex; flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* structure */
+  .kicker { font-size: 24px; letter-spacing: 4px; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  h2.pagetitle { font-size: 52px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .titlebar { border-bottom: 3px solid var(--accent); padding-bottom: 22px; margin-bottom: 30px; }
+  h3.sec { font-size: 31px; color: var(--accent); font-weight: 700; margin: 22px 0 12px; display: flex; align-items: center; gap: 12px; }
+  h3.sec::before { content: ""; width: 10px; height: 28px; background: var(--accent); border-radius: 5px; }
+  .footer {
+    position: absolute; bottom: 34px; left: 76px; right: 76px;
+    display: flex; justify-content: space-between;
+    font-size: 20px; color: var(--sub);
+    border-top: 1.5px solid #e5e0d8; padding-top: 14px;
+  }
+  .footer .pno { font-weight: 700; color: var(--accent); }
+
+  /* prose */
+  p { font-size: 27px; line-height: 1.75; margin-bottom: 18px; }
+  p.tight { margin-bottom: 10px; }
+  b, strong { color: var(--accent); font-weight: 600; }
+  .dim { color: var(--sub); }
+  ul.pts, ol.pts { margin: 4px 0 18px 42px; }
+  .pts li { font-size: 27px; line-height: 1.7; margin-bottom: 10px; }
+
+  /* blocks */
+  .formula { background: #fff; border: 1.5px solid #e5e0d8; border-radius: 14px; padding: 18px 26px; margin: 14px 0 20px; font-size: 26px; overflow: hidden; }
+  .formula .katex { font-size: 1.06em; }
+  .quote { background: var(--accent-soft); border-left: 8px solid var(--accent); border-radius: 0 14px 14px 0; padding: 20px 28px; margin: 18px 0 24px; font-size: 29px; font-weight: 600; line-height: 1.6; }
+  .note { background: var(--warn-soft); border-left: 8px solid var(--warn); border-radius: 0 14px 14px 0; padding: 16px 26px; margin: 14px 0 18px; font-size: 25px; line-height: 1.65; color: #7a3c17; }
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0 18px; }
+  .chip { font-size: 22px; padding: 7px 20px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; border: 1.5px solid var(--accent-mid); }
+  pre.code { background: #262335; color: #e8e4f5; border-radius: 14px; padding: 22px 28px; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 21.5px; line-height: 1.62; margin: 12px 0 18px; overflow: hidden; }
+  pre.code .cm { color: #8b85a8; }
+  pre.code .kw { color: #c792ea; }
+  pre.code .fn { color: #82aaff; }
+  table.cmp { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 25px; background: #fff; border-radius: 14px; overflow: hidden; border: 1.5px solid #e5e0d8; }
+  table.cmp th { background: var(--accent); color: #fff; padding: 14px 18px; font-weight: 600; text-align: left; }
+  table.cmp td { padding: 13px 18px; border-top: 1.5px solid #eee9e2; line-height: 1.5; }
+  table.cmp tr td:first-child { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+  /* diagrams: boxes + arrows, never ASCII art */
+  .diagram { background: #fff; border: 1.5px solid #e5e0d8; border-radius: 14px; padding: 26px 30px; margin: 14px 0 20px; }
+  .diagram .cap { font-size: 21px; color: var(--sub); text-align: center; margin-top: 10px; }
+  .flow { display: flex; align-items: center; margin: 16px 0 20px; }
+  .row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .vlist { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .fbox { background: #fff; border: 2px solid var(--accent); border-radius: 12px; padding: 12px 18px; font-size: 23px; font-weight: 600; text-align: center; line-height: 1.35; flex-shrink: 0; }
+  .fbox.soft { background: var(--accent-soft); }
+  .fbox.fill { background: var(--accent); color: #fff; }
+  .farrow { font-size: 30px; color: var(--accent); padding: 0 12px; flex-shrink: 0; }
+  .tok { background: var(--accent); color: #fff; border-radius: 10px; padding: 10px 16px; font-size: 23px; font-weight: 600; }
+  .experts { display: flex; gap: 10px; margin: 6px 0; }
+  .expert { width: 92px; height: 120px; border-radius: 12px; border: 2px dashed var(--accent-mid); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--sub); background: #fff; font-weight: 600; }
+  .expert.on { border: 2.5px solid var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .expert.shared { border: 2.5px solid var(--warn); background: var(--warn-soft); color: var(--warn); }
+
+  /* cover */
+  .cover { justify-content: center; }
+  .cover .series { font-size: 26px; letter-spacing: 6px; color: var(--accent); font-weight: 700; margin-bottom: 26px; }
+  .cover h1 { font-size: 108px; font-weight: 800; line-height: 1.15; }
+  .cover h1 .en { font-size: 62px; color: var(--accent); display: block; margin-top: 6px; }
+  .cover .tagline { font-size: 32px; margin: 34px 0 8px; line-height: 1.6; font-weight: 600; }
+  .cover .tagline .hl { color: var(--accent); }
+  .cover .brand { margin-top: 90px; display: flex; align-items: center; gap: 18px; font-size: 26px; color: var(--sub); }
+  .cover .brand .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ===== cover ===== -->
+<div class="page cover">
+  <div class="series">合集 · SERIES · EP.N</div>
+  <h1>标题<span class="en">English Subtitle</span></h1>
+  <div class="tagline">一句话承诺，<span class="hl">关键词</span>高亮</div>
+  <div class="formula">\[ \text{核心公式或一句话} \]</div>
+  <div class="chips" style="margin-top:44px">
+    <span class="chip">关键词一</span><span class="chip">关键词二</span>
+  </div>
+  <div class="brand"><span class="dot"></span>署名 · site</div>
+  <div class="footer"><span>标题 · 图文笔记</span><span class="pno">1 / N</span></div>
+</div>
+
+<!-- ===== body page: one idea ===== -->
+<div class="page">
+  <div class="titlebar">
+    <div class="kicker">PART 0N · 小节名</div>
+    <h2 class="pagetitle">本页回答的一个问题？</h2>
+  </div>
+  <p>正文。重点用 <b>b</b> 标出，次要信息用 <span class="dim">dim</span>。</p>
+  <div class="formula">\[ \dots \]</div>
+  <div class="quote">本页要带走的结论或问题。</div>
+  <div class="note">注意：容易被误读的点放这里。</div>
+  <div class="footer"><span>署名 · 标题</span><span class="pno">2 / N</span></div>
+</div>
+
+<!-- ===== closing: takeaway + CTA ===== -->
+<div class="page">
+  <div class="titlebar">
+    <div class="kicker">PART 0N · 总结</div>
+    <h2 class="pagetitle">结语</h2>
+  </div>
+  <ol class="pts">
+    <li><b>带走点一</b></li>
+    <li><b>带走点二</b></li>
+    <li><b>带走点三</b></li>
+  </ol>
+  <div class="quote" style="margin-top:auto">完整推导 + 代码 →<br>原文：blog.example/posts/xxx/</div>
+  <div class="footer"><span>署名 · 下集预告</span><span class="pno">N / N</span></div>
+</div>
+
+<script src="katex/katex.min.js"></script>
+<script src="katex/contrib/auto-render.min.js"></script>
+<script>
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "\\[", right: "\\]", display: true},
+      {left: "\\(", right: "\\)", display: false}
+    ],
+    throwOnError: false
+  });
+</script>
+</body>
+</html>

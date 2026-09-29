@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "postdeck · 人在回路的三道闸门",
+    "output": "postdeck.gates.zh.html",
+    "viewBox": [1090, 770],
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "legend": { "mode": "hidden" },
+    "locale": "zh-CN",
+    "views": [
+      {
+        "id": "gate-clarify",
+        "label": "闸门：澄清选项",
+        "focus": ["human", "agent"],
+        "note": "每次任务先批量澄清一次——平台、风格参考、渲染路径、发布方式——给定选项 + Other 自由填写。"
+      },
+      {
+        "id": "gate-plan",
+        "label": "闸门：批准计划",
+        "focus": ["human", "agent", "cli"],
+        "note": "align-first 模式下 agent 拿分页计划和文案草稿停下等裁决；默认模式直接跑到预览发布。"
+      },
+      {
+        "id": "gate-public",
+        "label": "闸门：是否公开",
+        "focus": ["human", "agent", "account"],
+        "note": "skill 只会发私密/草稿预览（或交付文件）。公开要么 App 内手动翻转、要么批准后重发——永远由人决定。"
+      }
+    ]
+  },
+  "participants": [
+    { "id": "human", "type": "external", "label": "人" },
+    { "id": "agent", "type": "backend", "label": "Agent" },
+    { "id": "local", "type": "database", "label": "本地渲染" },
+    { "id": "cli", "type": "database", "label": "平台 CLI / API" },
+    { "id": "account", "type": "cloud", "label": "平台账号" }
+  ],
+  "segments": [
+    { "from": 150, "to": 380, "label": "澄清与对齐" },
+    { "from": 390, "to": 535, "label": "制作与检查" },
+    { "from": 545, "to": 705, "label": "发布与交付" }
+  ],
+  "messages": [
+    { "id": "brief", "from": "human", "to": "agent", "y": 165, "label": "源文 URL + 已声明的偏好", "variant": "default" },
+    { "id": "clarifyq", "from": "agent", "to": "human", "y": 195, "label": "选项：平台 · 参考 · 渲染 · 发布", "variant": "emphasis", "note": "闸门 0 —— 开工前一次澄清" },
+    { "id": "clarifya", "from": "human", "to": "agent", "y": 228, "label": "勾选 · Other 覆盖", "variant": "security" },
+    { "id": "read", "from": "agent", "to": "cli", "y": 262, "label": "抓取风格参考：账号帖子 / URL", "variant": "emphasis" },
+    { "id": "voice", "from": "cli", "to": "agent", "y": 290, "label": "文风 · 习惯 · 版式", "variant": "return" },
+    { "id": "menu", "from": "agent", "to": "human", "y": 330, "label": "分页计划 + 文案草稿", "variant": "emphasis", "note": "闸门 1 —— 仅 align-first 模式" },
+    { "id": "pick", "from": "human", "to": "agent", "y": 364, "label": "批准 / 打回", "variant": "security" },
+    { "id": "deck", "from": "agent", "to": "local", "y": 408, "label": "建图集 · HTML → PDF → PNG", "variant": "default" },
+    { "id": "check", "from": "local", "to": "agent", "y": 438, "label": "逐页检查", "variant": "return" },
+    { "id": "post", "from": "agent", "to": "cli", "y": 470, "label": "发草稿 / 私密", "variant": "emphasis" },
+    { "id": "create", "from": "cli", "to": "account", "y": 498, "label": "预览已创建", "variant": "default" },
+    { "id": "verify", "from": "cli", "to": "agent", "y": 526, "label": "可见性已确认", "variant": "return" },
+    { "id": "auditmsg", "from": "agent", "to": "human", "y": 578, "label": "预览上线 —— 去审", "variant": "emphasis", "note": "闸门 2 —— 公开永远由人决定" },
+    { "id": "appreview", "from": "human", "to": "account", "y": 611, "label": "审阅 · App 内翻转可见性", "variant": "security" },
+    { "id": "revise", "from": "human", "to": "agent", "y": 644, "label": "修改 → 重发预览", "variant": "default" },
+    { "id": "report", "from": "agent", "to": "human", "y": 676, "label": "报告：帖子 id + 清理", "variant": "default" }
+  ]
+}

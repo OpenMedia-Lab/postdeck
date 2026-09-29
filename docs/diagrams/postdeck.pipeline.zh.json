@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "postdeck · 长文转卡片流水线",
+    "subtitle": "先澄清再动工 · 先预览再公开",
+    "locale": "zh-CN",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "viewBox": [1220, 420],
+    "legend": { "mode": "hidden" },
+    "output": "postdeck.pipeline.zh.html"
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [40, 110],
+    "cols": 6,
+    "cellW": 140,
+    "cellH": 68,
+    "gapX": 60,
+    "gapY": 110
+  },
+  "components": [
+    { "id": "intake", "size": [140, 68], "row": 0, "col": 0, "type": "frontend", "label": "任务接入", "sublabel": "源文 · 模式 · 授权" },
+    { "id": "clarify", "size": [140, 68], "row": 0, "col": 1, "type": "security", "label": "澄清选项", "sublabel": "平台 · 参考 · 渲染 · 发布" },
+    { "id": "adapt", "size": [140, 68], "row": 0, "col": 2, "type": "backend", "label": "改写", "sublabel": "分页计划 · 笔记文案" },
+    { "id": "gate1", "size": [140, 68], "row": 0, "col": 3, "type": "security", "label": "批准计划?", "sublabel": "可选 · 授权模式" },
+    { "id": "layout", "size": [140, 68], "row": 0, "col": 4, "type": "backend", "label": "排版", "sublabel": "3:4 HTML 卡片" },
+    { "id": "render", "size": [140, 68], "row": 0, "col": 5, "type": "backend", "label": "渲染", "sublabel": "HTML → PDF → PNG" },
+    { "id": "inspect", "size": [140, 68], "row": 1, "col": 5, "type": "database", "label": "逐页检查", "sublabel": "每张图都过一遍" },
+    { "id": "post", "size": [140, 68], "row": 1, "col": 4, "type": "cloud", "label": "发预览", "sublabel": "草稿/私密 · 或交付文件" },
+    { "id": "review", "size": [140, 68], "row": 1, "col": 3, "type": "external", "label": "人工预览", "sublabel": "App 内 / 本地文件" },
+    { "id": "gate2", "size": [140, 68], "row": 1, "col": 2, "type": "security", "label": "是否公开?", "sublabel": "App 翻转 / 重发" },
+    { "id": "report", "size": [140, 68], "row": 1, "col": 1, "type": "frontend", "label": "交付报告", "sublabel": "帖子 id · 清理" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "01  对齐", "wraps": ["intake", "clarify", "adapt", "gate1"], "pad": 20 },
+    { "kind": "region", "label": "02  制作", "wraps": ["layout", "render"], "pad": 20 },
+    { "kind": "region", "label": "03  检查", "wraps": ["inspect"], "pad": 20 },
+    { "kind": "region", "label": "04  发布", "wraps": ["post", "review", "gate2", "report"], "pad": 20 }
+  ],
+  "connections": [
+    { "id": "i-c", "from": "intake", "to": "clarify" },
+    { "id": "c-a", "from": "clarify", "to": "adapt", "variant": "emphasis" },
+    { "id": "a-g1", "from": "adapt", "to": "gate1" },
+    { "id": "revise", "from": "gate1", "to": "adapt", "label": "打回", "variant": "dashed", "fromSide": "top", "toSide": "top", "via": [[710, 74], [510, 74]] },
+    { "id": "g1-l", "from": "gate1", "to": "layout", "label": "通过", "variant": "emphasis" },
+    { "id": "l-r", "from": "layout", "to": "render" },
+    { "id": "r-ins", "from": "render", "to": "inspect" },
+    { "id": "fix", "from": "inspect", "to": "layout", "label": "修", "variant": "dashed", "fromSide": "bottom", "toSide": "right", "via": [[1110, 396], [1010, 396], [1010, 144]] },
+    { "id": "ins-p", "from": "inspect", "to": "post" },
+    { "id": "p-rev", "from": "post", "to": "review" },
+    { "id": "rev-g2", "from": "review", "to": "gate2" },
+    { "id": "changes", "from": "gate2", "to": "adapt", "label": "改 → 重发预览", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelAt": [560, 232] },
+    { "id": "g2-rep", "from": "gate2", "to": "report", "label": "通过", "variant": "emphasis" }
+  ]
+}

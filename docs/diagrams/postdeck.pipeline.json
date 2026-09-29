@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "postdeck · Post-to-deck pipeline",
+    "subtitle": "clarify first · preview before public",
+    "locale": "en",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "viewBox": [1220, 420],
+    "legend": { "mode": "hidden" },
+    "output": "postdeck.pipeline.html"
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [40, 110],
+    "cols": 6,
+    "cellW": 140,
+    "cellH": 68,
+    "gapX": 60,
+    "gapY": 110
+  },
+  "components": [
+    { "id": "intake", "size": [140, 68], "row": 0, "col": 0, "type": "frontend", "label": "Intake", "sublabel": "source · mode · auth" },
+    { "id": "clarify", "size": [140, 68], "row": 0, "col": 1, "type": "security", "label": "Clarify", "sublabel": "platform · refs · render · post" },
+    { "id": "adapt", "size": [140, 68], "row": 0, "col": 2, "type": "backend", "label": "Adapt", "sublabel": "page plan · note copy" },
+    { "id": "gate1", "size": [140, 68], "row": 0, "col": 3, "type": "security", "label": "Approve plan?", "sublabel": "optional · auth mode" },
+    { "id": "layout", "size": [140, 68], "row": 0, "col": 4, "type": "backend", "label": "Layout", "sublabel": "3:4 HTML card deck" },
+    { "id": "render", "size": [140, 68], "row": 0, "col": 5, "type": "backend", "label": "Render", "sublabel": "HTML → PDF → PNG" },
+    { "id": "inspect", "size": [140, 68], "row": 1, "col": 5, "type": "database", "label": "Inspect", "sublabel": "every page, on-image QA" },
+    { "id": "post", "size": [140, 68], "row": 1, "col": 4, "type": "cloud", "label": "Post preview", "sublabel": "draft/private · or handoff" },
+    { "id": "review", "size": [140, 68], "row": 1, "col": 3, "type": "external", "label": "Human review", "sublabel": "in app / local files" },
+    { "id": "gate2", "size": [140, 68], "row": 1, "col": 2, "type": "security", "label": "Go public?", "sublabel": "app flip / repost" },
+    { "id": "report", "size": [140, 68], "row": 1, "col": 1, "type": "frontend", "label": "Report", "sublabel": "post id · cleanup" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "01  ALIGN", "wraps": ["intake", "clarify", "adapt", "gate1"], "pad": 20 },
+    { "kind": "region", "label": "02  MAKE", "wraps": ["layout", "render"], "pad": 20 },
+    { "kind": "region", "label": "03  CHECK", "wraps": ["inspect"], "pad": 20 },
+    { "kind": "region", "label": "04  SHIP", "wraps": ["post", "review", "gate2", "report"], "pad": 20 }
+  ],
+  "connections": [
+    { "id": "i-c", "from": "intake", "to": "clarify" },
+    { "id": "c-a", "from": "clarify", "to": "adapt", "variant": "emphasis" },
+    { "id": "a-g1", "from": "adapt", "to": "gate1" },
+    { "id": "revise", "from": "gate1", "to": "adapt", "label": "revise", "variant": "dashed", "fromSide": "top", "toSide": "top", "via": [[710, 74], [510, 74]] },
+    { "id": "g1-l", "from": "gate1", "to": "layout", "label": "approved", "variant": "emphasis" },
+    { "id": "l-r", "from": "layout", "to": "render" },
+    { "id": "r-ins", "from": "render", "to": "inspect" },
+    { "id": "fix", "from": "inspect", "to": "layout", "label": "fix", "variant": "dashed", "fromSide": "bottom", "toSide": "right", "via": [[1110, 396], [1010, 396], [1010, 144]] },
+    { "id": "ins-p", "from": "inspect", "to": "post" },
+    { "id": "p-rev", "from": "post", "to": "review" },
+    { "id": "rev-g2", "from": "review", "to": "gate2" },
+    { "id": "changes", "from": "gate2", "to": "adapt", "label": "revise → repost preview", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelAt": [560, 232] },
+    { "id": "g2-rep", "from": "gate2", "to": "report", "label": "approved", "variant": "emphasis" }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "postdeck · Human gates in the loop",
+    "output": "postdeck.gates.html",
+    "viewBox": [1090, 770],
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "legend": { "mode": "hidden" },
+    "views": [
+      {
+        "id": "gate-clarify",
+        "label": "Gate: clarify",
+        "focus": ["human", "agent"],
+        "note": "Every run opens with one batched clarify round — platform, style refs, render path, post mechanism — options plus Other."
+      },
+      {
+        "id": "gate-plan",
+        "label": "Gate: approve plan",
+        "focus": ["human", "agent", "cli"],
+        "note": "In align-first mode the agent stops with the page plan and copy draft; in the default mode it proceeds straight to a preview post."
+      },
+      {
+        "id": "gate-public",
+        "label": "Gate: go public",
+        "focus": ["human", "agent", "account"],
+        "note": "The skill only posts a private/draft preview or hands off files. Going public is the human's flip or an approved repost."
+      }
+    ]
+  },
+  "participants": [
+    { "id": "human", "type": "external", "label": "Human" },
+    { "id": "agent", "type": "backend", "label": "Agent" },
+    { "id": "local", "type": "database", "label": "Local render" },
+    { "id": "cli", "type": "database", "label": "Platform CLI / API" },
+    { "id": "account", "type": "cloud", "label": "Platform account" }
+  ],
+  "segments": [
+    { "from": 150, "to": 380, "label": "Clarify & align" },
+    { "from": 390, "to": 535, "label": "Make & check" },
+    { "from": 545, "to": 705, "label": "Post & ship" }
+  ],
+  "messages": [
+    { "id": "brief", "from": "human", "to": "agent", "y": 165, "label": "source URL + any stated prefs", "variant": "default" },
+    { "id": "clarifyq", "from": "agent", "to": "human", "y": 195, "label": "choices: platform · refs · render · post", "variant": "emphasis", "note": "GATE 0 — clarify once, up front" },
+    { "id": "clarifya", "from": "human", "to": "agent", "y": 228, "label": "picks · Other overrides", "variant": "security" },
+    { "id": "read", "from": "agent", "to": "cli", "y": 262, "label": "fetch style refs — posts or URLs", "variant": "emphasis" },
+    { "id": "voice", "from": "cli", "to": "agent", "y": 290, "label": "voice · habits · geometry", "variant": "return" },
+    { "id": "menu", "from": "agent", "to": "human", "y": 330, "label": "page plan + copy draft", "variant": "emphasis", "note": "GATE 1 — only in align-first mode" },
+    { "id": "pick", "from": "human", "to": "agent", "y": 364, "label": "approve / revise", "variant": "security" },
+    { "id": "deck", "from": "agent", "to": "local", "y": 408, "label": "build deck · HTML → PDF → PNG", "variant": "default" },
+    { "id": "check", "from": "local", "to": "agent", "y": 438, "label": "inspect every page", "variant": "return" },
+    { "id": "post", "from": "agent", "to": "cli", "y": 470, "label": "post draft / private", "variant": "emphasis" },
+    { "id": "create", "from": "cli", "to": "account", "y": 498, "label": "preview created", "variant": "default" },
+    { "id": "verify", "from": "cli", "to": "agent", "y": 526, "label": "visibility confirmed", "variant": "return" },
+    { "id": "auditmsg", "from": "agent", "to": "human", "y": 578, "label": "preview live — review it", "variant": "emphasis", "note": "GATE 2 — going public is always human" },
+    { "id": "appreview", "from": "human", "to": "account", "y": 611, "label": "review · flip visibility in app", "variant": "security" },
+    { "id": "revise", "from": "human", "to": "agent", "y": 644, "label": "revisions → repost preview", "variant": "default" },
+    { "id": "report", "from": "agent", "to": "human", "y": 676, "label": "report: id + cleanup", "variant": "default" }
+  ]
+}
