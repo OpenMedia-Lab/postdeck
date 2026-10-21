@@ -16,7 +16,7 @@
 postdeck 是围绕这个观察做的 Agent Skill：**转换是重新设计，不是复制粘贴。** 它把技术长文蒸馏成卡片图集——本地化渲染的公式、手绘结构图、一页一个点——然后发成**私密/草稿预览**（或直接交付文件），让你以读者视角审完之后，再决定要不要公开。平台不限——下面的小红书是通过 `xhs` CLI 走通的经典示例。
 
 ```bash
-npx skills add Momoyeyu/postdeck -g
+npx skills add OpenMedia-Lab/postdeck -g
 ```
 
 ## 它具体做什么

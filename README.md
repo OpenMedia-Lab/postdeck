@@ -16,7 +16,7 @@ A blog post and a swipe-deck note are different media. The post rewards depth; t
 postdeck is an Agent Skill built around that observation: **the conversion is a redesign, not a copy-paste.** It distills a technical post into a card deck — vendored math, hand-built diagrams, one idea per page — then posts a *private/draft preview* (or hands you the files) so you review the real thing before anyone else sees it. It works on any platform you can name — Xiaohongshu via the `xhs` CLI is the classic worked example below.
 
 ```bash
-npx skills add Momoyeyu/postdeck -g
+npx skills add OpenMedia-Lab/postdeck -g
 ```
 
 ## What it actually does
